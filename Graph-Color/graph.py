@@ -46,6 +46,8 @@ class Graph(object):
         return edges
 
     def __str__(self):
+        return str(self.__graph_dict)
+        """
         res = "Vertices:\n"
         for k in self.__graph_dict:
             res += "\t" + str(k) + "\n"
@@ -53,3 +55,4 @@ class Graph(object):
         for edge in self.__generate_edges():
             res += str(edge) + " "
         return res
+        """
