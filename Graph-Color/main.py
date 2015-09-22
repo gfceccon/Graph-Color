@@ -8,35 +8,38 @@ def initialize_colors(graph):
 
 	return colors
 
-def backtracking_recursive(graph, vertex_id, colors, map_colors):
-	if vertex_id > len(graph):
-		return False
+def backtracking_recursive(graph, colors, map_colors):
+	if len(map_colors) == len(graph):
+		return True
 
-	available = len(colors)
+	for vertex in graph:
+		if vertex not in map_colors:
+			break
 
 	for color in colors:
-		for adjacent in graph[vertex_id]:
+		available = True
+		for adjacent in graph[vertex]:
 			if map_colors.get(adjacent) == color:
-				available -= 1
-				break
+				available = False
 
-	if available > 0:
-		map_colors[vertex_id].append(color)
-		if len(map_colors) == len(graph):
-			return True
-		else:
-			backtracking_recursive(graph, vertex_id + 1, colors, map_colors)
-	else:
-		return False
+		if available == True:
+			map_colors[vertex] = color
+
+			if backtracking_recursive(graph, colors, map_colors) == True:
+				return True
+			else:
+				del map_colors[vertex]
+
+	return False
 
 def backtracking(graph):
 	map_colors = dict()
 	colors = ['Azul', 'Vermelho', 'Verde', 'Amarelo']
 
-	if backtracking_recursive(graph, 0, colors, map_colors) == True:
+	if backtracking_recursive(graph, colors, map_colors) == True:
 		return map_colors
 	else:
-		return 
+		return []
 
 input() # discard first line
 
@@ -55,9 +58,8 @@ for line in sys.stdin:
 		else:
 			graph[src].append(dsts[i].split(".\n")[0]) # add a new edge in the graph
 
-print(graph)
 colors = initialize_colors(graph)
 
-result = backtracking(graph)
-if result != False:
-	print(result)
+print(graph)
+print('\n')
+print(backtracking(graph))
