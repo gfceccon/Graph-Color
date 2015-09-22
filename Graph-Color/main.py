@@ -1,4 +1,5 @@
 import sys
+import collections
 
 # initialize each vertex with all possible colors
 def initialize_colors(graph):
@@ -8,27 +9,26 @@ def initialize_colors(graph):
 
 	return colors
 
-def backtracking_recursive(graph, colors, map_colors):
-	if len(map_colors) == len(graph):
+def backtracking_recursive(graph, graph_len, vertex_id, colors, map_colors,):
+	if len(map_colors) == graph_len:
 		return True
 
-	for vertex in graph:
-		if vertex not in map_colors:
-			break
+	vertex_adjacents = list(graph.values())[vertex_id]
+	vertex_key = list(graph.keys())[vertex_id]
 
 	for color in colors:
 		available = True
-		for adjacent in graph[vertex]:
+		for adjacent in vertex_adjacents:
 			if map_colors.get(adjacent) == color:
 				available = False
 
 		if available == True:
-			map_colors[vertex] = color
+			map_colors[vertex_key] = color
 
-			if backtracking_recursive(graph, colors, map_colors) == True:
+			if backtracking_recursive(graph, graph_len, vertex_id + 1, colors, map_colors) == True:
 				return True
 			else:
-				del map_colors[vertex]
+				del map_colors[vertex_key]
 
 	return False
 
@@ -36,19 +36,19 @@ def backtracking(graph):
 	map_colors = dict()
 	colors = ['Azul', 'Vermelho', 'Verde', 'Amarelo']
 
-	if backtracking_recursive(graph, colors, map_colors) == True:
+	if backtracking_recursive(graph, len(graph), 0, colors, map_colors) == True:
 		return map_colors
 	else:
 		return []
 
 input() # discard first line
 
-graph = dict() # initialize the dict representing our graph
+graph = collections.OrderedDict() # initialize the dict representing our graph
 
 for line in sys.stdin:
-	list = line.split(": ")	   #
-	src = list[0]			   #
-	dsts = list[1].split(", ") # input parsing
+	elems = line.split(": ")	#
+	src = elems[0]			    #
+	dsts = elems[1].split(", ") # input parsing
 
 	graph[src] = []
 
@@ -61,5 +61,4 @@ for line in sys.stdin:
 colors = initialize_colors(graph)
 
 print(graph)
-print('\n')
 print(backtracking(graph))
