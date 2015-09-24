@@ -67,7 +67,7 @@ def color_graph_recursive(
 				if greatest != -1:
 					next_vertex = list(graph.keys()).index(candidate)
 				else:
-				 	# Only enters here when the current vertix is the
+				 	# Only enters here when the current vertex is the
 				 	# last one to be colored. This means it is already
 				 	# colored and the result is valid!
 					return True
@@ -87,7 +87,7 @@ def color_graph_recursive(
 	return False
 
 # Non-recursive coloring function that uses the recursive one.
-def color_graph(graph, flag):
+def color_graph(graph, flag='a'):
 	map_colors = dict()
 
 	possible_colors = ['Azul', 'Vermelho', 'Verde', 'Amarelo']
@@ -98,40 +98,66 @@ def color_graph(graph, flag):
 			map_colors, flag):
 		return map_colors
 
-# Parses the input and creates the graph from it.
-def parse_input():
-	flag = input().split(" ")[1].split("\n")[0]  # Grab the flag letter
+# Parse the input and create the graph from it.
+def parse_input(f=sys.stdin):
+	# Grab the flag letter
+	flag = f.readline().split(" ")[1].split("\n")[0]
 
 	# Initialize the dict representing our graph.
 	graph = collections.OrderedDict()
 
-	for line in sys.stdin:
+	for line in f:
 		elems = line.split(": ")	 # 
-		src = elems[0]			     # Separates the vertix
+		src = elems[0]			     # Separates the vertex
 		dsts = elems[1].split(", ")  # from its adjacents.
 
 		graph[src] = []  # Initialize this vertex's adjencency list
 
 		for i in range(len(dsts)):
 			if i != (len(dsts) - 1):
-				# Add a new edge for this vertix
+				# Add a new edge for this vertex
 				graph[src].append(dsts[i])
 			else:
-				# Add the last edge for this vertix (ends with '\n')
+				# Add the last edge for this vertex (ends with '\n')
 				graph[src].append(dsts[i].split(".\n")[0])
 
 	return (graph, flag)
 
-# Main function
-def main():
-	graph, flag = parse_input()
+# Print the resulting colored map in the specified format.
+def print_result(colored_map, f=sys.stdout):
+	for key, value in colored_map.items():
+		print('%s: %s.' % (key, value), file=f)
 
-	# Colors the graph and counts the total time elapsed for that
-	start_time = time.time()
-	print(color_graph(graph, flag))
-	elapsed_time = time.time() - start_time
-	
-	print("Time taken using '%s' flag: %ss" % (flag, elapsed_time))
+# Main function
+def main(argv=sys.argv):
+	# In case of wrong list of arguments.
+	if len(argv) != 3:
+		print('usage: %s input_file output_file' % argv[0])
+		return False
+
+	# Open the input file and generate the graph from it.
+	try:
+		f = open(argv[1], 'r')
+		graph, flag = parse_input(f)
+		f.close()
+	except OSError as e:
+		print(e)
+		return False
+
+	# Open the output file, color the graph and count the total time.
+	try:
+		f = open(argv[2], 'w')
+		start_time = time.time()
+		print_result(color_graph(graph, flag), f)
+		elapsed_time = time.time() - start_time
+		f.close()
+	except OSError as e:
+		print(e)
+		return False
+
+	print("Time taken to color '%s' using '%s' flag: %.5fs" % 
+			(argv[1], flag, elapsed_time))
+	return True
 
 if __name__ == '__main__':
 	main()

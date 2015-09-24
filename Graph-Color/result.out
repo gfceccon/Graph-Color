@@ -1,2 +1,27 @@
-{'Santa Catarina': 'Vermelho', 'Pará': 'Verde', 'Tocantins': 'Vermelho', 'Alagoas': 'Verde', 'Mato Grosso do Sul': 'Vermelho', 'Rio Grande do Norte': 'Vermelho', 'Paraná': 'Azul', 'Roraima': 'Azul', 'Goiás': 'Verde', 'Acre': 'Azul', 'Ceará': 'Azul', 'São Paulo': 'Verde', 'Rondônia': 'Verde', 'Pernambuco': 'Vermelho', 'Para�\xadba': 'Verde', 'Sergipe': 'Vermelho', 'Rio Grande do Sul': 'Azul', 'Bahia': 'Azul', 'Distrito Federal': 'Azul', 'Maranhão': 'Azul', 'Piau�\xad': 'Verde', 'Rio de Janeiro': 'Azul', 'Amazonas': 'Vermelho', 'Amapá': 'Azul', 'Esp�\xadrito Santo': 'Vermelho', 'Mato Grosso': 'Azul', 'Minas Gerais': 'Amarelo'}
-Time taken using 'c' flag: 0.0010006427764892578s
+Tocantins: Vermelho.
+Piauí: Verde.
+Goiás: Verde.
+Sergipe: Vermelho.
+Minas Gerais: Amarelo.
+Pernambuco: Vermelho.
+Amazonas: Vermelho.
+Mato Grosso do Sul: Vermelho.
+Santa Catarina: Vermelho.
+Rio de Janeiro: Azul.
+Espírito Santo: Vermelho.
+Paraíba: Verde.
+Distrito Federal: Azul.
+Rio Grande do Sul: Azul.
+Paraná: Azul.
+Mato Grosso: Azul.
+Acre: Azul.
+Roraima: Azul.
+Rondônia: Verde.
+Amapá: Azul.
+Maranhão: Azul.
+Rio Grande do Norte: Vermelho.
+Ceará: Azul.
+Pará: Verde.
+Bahia: Azul.
+Alagoas: Verde.
+São Paulo: Verde.
