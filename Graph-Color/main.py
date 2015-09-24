@@ -64,6 +64,15 @@ def color_graph_recursive(
 						greatest = len(used_colors[vertex])
 						candidate = vertex
 
+				if flag == 'd':
+					mvr = greatest
+					greatest = -1
+					for vertex in graph:
+						if(vertex not in map_colors and len(used_colors[vertex]) == mvr):
+							if(len(graph[vertex]) > greatest):
+								greatest = len(graph[vertex])
+								candidate = vertex
+
 				if greatest != -1:
 					next_vertex = list(graph.keys()).index(candidate)
 				else:
