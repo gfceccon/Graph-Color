@@ -2,110 +2,7 @@ import sys
 import time
 import collections
 
-# Initialize each vertex with all possible colors.
-def initialize_colors(graph):
-	colors = dict()
-	for vertex in graph:
-		colors[vertex] = []
-
-	return colors
-
-# Recursive version of the coloring function.
-def color_graph_recursive(
-		graph, graph_len, possible_colors, used_colors,
-		map_colors, flag='a', vertex_id=0):
-	if len(map_colors) == graph_len:
-		return True
-
-	my_colored_states = []
-
-	vertex_key = list(graph.keys())[vertex_id]
-	vertex_adjacents = list(graph.values())[vertex_id]
-
-	for color in possible_colors:
-		available = True
-
-		# Tests the adjacent vertices to see if the current color can
-		# be used; if not, break to the next color.
-		for adjacent in vertex_adjacents:
-			if map_colors.get(adjacent) == color:
-				available = False
-				break
-
-		if available == True:
-			# Color myself to the current color.
-			map_colors[vertex_key] = color
-
-			if flag != 'a':
-				for adjacent in vertex_adjacents:
-					if adjacent not in map_colors:
-						if color not in used_colors[adjacent]:
-							used_colors[adjacent].append(color)
-							my_colored_states.append(adjacent)
-
-							# Forward checking heuristic
-							if (len(possible_colors) ==
-							    	len(used_colors[adjacent])):
-								available = False
-								break
-
-			if available == False:
-				del map_colors[vertex_key]
-				continue
-
-			if flag == 'c' or flag == 'd':
-				greatest = -1
-				candidate = vertex_key  # Only considered when graph
-										# is fully colored
-
-				for vertex in graph:
-					if (vertex not in map_colors and 
-							len(used_colors[vertex]) > greatest):
-						greatest = len(used_colors[vertex])
-						candidate = vertex
-
-				if flag == 'd':
-					mvr = greatest
-					greatest = -1
-					for vertex in graph:
-						if(vertex not in map_colors and len(used_colors[vertex]) == mvr):
-							if(len(graph[vertex]) > greatest):
-								greatest = len(graph[vertex])
-								candidate = vertex
-
-				if greatest != -1:
-					next_vertex = list(graph.keys()).index(candidate)
-				else:
-				 	# Only enters here when the current vertex is the
-				 	# last one to be colored. This means it is already
-				 	# colored and the result is valid!
-					return True
-			else:
-				next_vertex = vertex_id + 1
-
-			if color_graph_recursive(
-					graph, graph_len, possible_colors,
-					used_colors, map_colors, flag, next_vertex):
-				return True
-			else:
-				del map_colors[vertex_key]
-				for state in my_colored_states:
-					if color in used_colors[state]:
-						used_colors[state].remove(color)
-
-	return False
-
-# Non-recursive coloring function that uses the recursive one.
-def color_graph(graph, flag='a'):
-	map_colors = dict()
-
-	possible_colors = ['Azul', 'Vermelho', 'Verde', 'Amarelo']
-	used_colors = initialize_colors(graph)
-
-	if color_graph_recursive(
-			graph, len(graph), possible_colors, used_colors,
-			map_colors, flag):
-		return map_colors
+from graph import color_graph, print_result
 
 # Parse the input and create the graph from it.
 def parse_input(f=sys.stdin):
@@ -132,40 +29,101 @@ def parse_input(f=sys.stdin):
 
 	return (graph, flag)
 
-# Print the resulting colored map in the specified format.
-def print_result(colored_map, f=sys.stdout):
-	for key, value in colored_map.items():
-		print('%s: %s.' % (key, value), file=f)
+def initialize_results():
+	results = dict()
+	flags = ['a', 'b', 'c', 'd']
+
+	for flag in flags:
+		results[flag] = []
+
+	return results
+
+def test_performance(graph, n=10):
+	# The next blocks of code colors the graph n times with each 
+	# flag and counts the total time elapsed and attributions
+	results = initialize_results()
+
+	# Using 'a' flag
+	attrib = 0
+	start_time = time.time()
+	for i in range(n):
+		attrib += color_graph(graph, 'a')[1][0]
+	results['a'].append((time.time() - start_time) / n)
+	results['a'].append(attrib / n)
+
+	# Using 'b' flag
+	attrib = 0
+	start_time = time.time()
+	for i in range(n):
+		attrib += color_graph(graph, 'b')[1][0]
+	results['b'].append((time.time() - start_time) / n)
+	results['b'].append(attrib / n)
+
+	# Using 'c' flag
+	attrib = 0
+	start_time = time.time()
+	for i in range(n):
+		attrib += color_graph(graph, 'c')[1][0]
+	results['c'].append((time.time() - start_time) / n)
+	results['c'].append(attrib / n)
+
+	# Using 'd' flag
+	attrib = 0
+	start_time = time.time()
+	for i in range(n):
+		attrib += color_graph(graph, 'd')[1][0]
+	results['d'].append((time.time() - start_time) / n)
+	results['d'].append(attrib / n)
+
+	return results
 
 # Main function
 def main(argv=sys.argv):
 	# In case of wrong list of arguments.
-	if len(argv) != 3:
-		print('usage: %s input_file output_file' % argv[0])
+	if (len(argv) < 3 or len(argv) > 4):
+		print('usage: %s input_file output_file [performance_file]' % argv[0])
+		print('If performance_file is not specified, performance tests will not be run.')
 		return False
 
-	# Open the input file and generate the graph from it.
 	try:
-		f = open(argv[1], 'r')
+		f = open(argv[1], 'r')  # Try to open the input file
+	except OSError as e:
+		print(e)
+		return False
+	else:
+		# If successful, generate the graph from the file.
 		graph, flag = parse_input(f)
 		f.close()
-	except OSError as e:
-		print(e)
-		return False
 
-	# Open the output file, color the graph and count the total time.
 	try:
-		f = open(argv[2], 'w')
-		start_time = time.time()
-		print_result(color_graph(graph, flag), f)
-		elapsed_time = time.time() - start_time
-		f.close()
+		f = open(argv[2], 'w')  # Try to open the output file
 	except OSError as e:
 		print(e)
 		return False
+	else:
+		# If successful, print the resulting colored graph.
+		print_result(color_graph(graph, flag)[0], f)
+		f.close()
 
-	print("Time taken to color '%s' using '%s' flag: %.5fs" % 
-			(argv[1], flag, elapsed_time))
+	# If there is one performance file specified,
+	# run the performance tests.
+	if len(argv) == 4:
+		results = test_performance(graph, 50)
+
+		try:
+			f = open(argv[3], 'w')
+		except OSError as e:
+			print(e)
+			return False
+		else:
+			for flag in results:
+				print("Results for '%s' flag:" % flag, file=f)
+				print("\tAverage time taken to color graph: %.5fs"
+					% results.get(flag)[0], file=f)
+				print("\tAverage number of attributions: %.0f\n" 
+					% results.get(flag)[1], file=f)
+			f.close()
+
 	return True
 
 if __name__ == '__main__':
