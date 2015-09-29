@@ -29,6 +29,7 @@ def parse_input(f=sys.stdin):
 
 	return (graph, flag)
 
+# Initialize the result vector with empty lists.
 def initialize_results():
 	results = dict()
 	flags = ['a', 'b', 'c', 'd']
@@ -38,9 +39,9 @@ def initialize_results():
 
 	return results
 
+# Colors the graph n times with each flag
+# and counts the total time elapsed and attributions.
 def test_performance(graph, n=10):
-	# The next blocks of code colors the graph n times with each 
-	# flag and counts the total time elapsed and attributions
 	results = initialize_results()
 
 	# Using 'a' flag
